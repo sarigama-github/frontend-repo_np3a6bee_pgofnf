@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, Store, Shield, ScrollText, Home, Info, CreditCard } from 'lucide-react'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { ShoppingCart, Store, Shield, ScrollText, Home, CreditCard } from 'lucide-react'
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 
@@ -160,7 +160,8 @@ function ShopPage() {
 function CheckoutPage() {
   const navigate = useNavigate()
   const [submitting, setSubmitting] = useState(false)
-  const cart = history.state?.usr?.cart || []
+  const locationState = window.history.state && window.history.state.usr ? window.history.state.usr : null
+  const cart = locationState?.cart || []
   const subtotal = cart.reduce((s,i)=> s + i.price*i.quantity, 0)
   const [form, setForm] = useState({ email: '', name: '', ign: '', note: '' })
 
@@ -234,7 +235,7 @@ function CheckoutPage() {
 }
 
 function SuccessPage() {
-  const params = new URLSearchParams(location.search)
+  const params = new URLSearchParams(window.location.search)
   const orderId = params.get('order')
   return (
     <Layout>
@@ -285,15 +286,13 @@ function TOSPage() {
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage/>} />
-        <Route path="/shop" element={<ShopPage/>} />
-        <Route path="/checkout" element={<CheckoutPage/>} />
-        <Route path="/checkout/success" element={<SuccessPage/>} />
-        <Route path="/rules" element={<RulesPage/>} />
-        <Route path="/tos" element={<TOSPage/>} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<HomePage/>} />
+      <Route path="/shop" element={<ShopPage/>} />
+      <Route path="/checkout" element={<CheckoutPage/>} />
+      <Route path="/checkout/success" element={<SuccessPage/>} />
+      <Route path="/rules" element={<RulesPage/>} />
+      <Route path="/tos" element={<TOSPage/>} />
+    </Routes>
   )
 }
